@@ -56,7 +56,7 @@ button {
   
 }
 
-a {
+a, button {
   cursor: pointer;
 }
 .main-container {
