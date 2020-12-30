@@ -6,7 +6,8 @@ let round = 0;
 const hearts = document.querySelectorAll('.tries');
 const resetBtn = document.querySelector('.btn__reset');
 const overlay = document.querySelector('#overlay'); 
-let phraseLi
+let phraseLi;
+let phraseArrs = {};
 const phrases = [
                  ["Dont interrupt me while I am interrupting", "Winston Churchil"],
                  ["Humor is reason gone mad","Groucho Marx"],
@@ -26,7 +27,7 @@ function getRandomPhrase(arr) {
 }
 
 
-
+//get random phrase and create necessary arrays
 function createPhraseArrs() {
     let phraseArr = getRandomPhrase(phrases);
     let phraseNotAsArray = phraseArr[0];
@@ -53,13 +54,109 @@ function createLetter(letter) {
     }
 
 }
-let phraseArrs = {};
-//create a letter element for every item in a phrase array
 
-//select all LI elements from the phrase 
+//for each letter in an array create a letter LI element
+function createLetterSection(arr) {
+    for (let i = 0; i < arr.length; i++) {
+        createLetter(arr[i]);
+    }
+}
 
 
-// Reset button => Start the game => hide Overlay element
+function reduceLifeCount(count) {
+    return count--;
+}
+//remove an icon of Life
+function removeLife(index, icon){
+    return icon[index].style.display = 'none';
+}
+// show all life icons
+function showLifeIcons(icons){
+    return icons.forEach(icon => icon.style.display = 'inline-block');
+}
+
+// loop through each letter and apply count letter function
+function letterLoop(letterCount, letter) {
+    for (let i = 0; i < phraseArrs.phraseAsArray.length; i++) {
+        letterCount = countLetterMatch(letter, i, letterCount);
+    }
+    return letterCount;
+}
+    // if clicked letter is in array => add to total count of matched letters and add to 
+    // count of appearance of this letter in the phrase. 
+    function countLetterMatch(letter, i, letterCount) {
+        if (letter === phraseArrs.phraseAsArray[i].toLowerCase()) {
+            phraseLi[i].classList.add('show');
+            matchCount++;
+            letterCount++;
+        }
+        return letterCount;
+    }
+
+    //disable keybord letter when clicked
+    function disableKeybordLetter(e){
+        e.disabled = true;
+        e.classList.add('chosen');
+    }
+
+    //if win => display overlay with text and reset button
+    function checkWin (count){
+
+        if(phraseArrs.phraseArrayNoSpace.length === count){
+           resetBtn.textContent = 'Start new Game?'; 
+           overlay.style.display = 'flex';
+           overlay.classList = 'win';
+           overlay.querySelector('.title').innerHTML = `Congratulations,<br> You have won!!!`
+           round += 1;
+          
+           let p = document.createElement('p');
+           p.innerHTML = `Quotation round ${round}: <strong><cite>${phraseArrs.phraseNotAsArray}.</cite></strong><br> by ${phraseArrs.author}`;
+           resetBtn.insertAdjacentElement("afterend", p);
+           resetGame();
+          
+        }    
+    }
+
+    // if lost => display overlay with text and reset button
+    function checkLost (lCount){
+
+        if(lCount === 0){
+           overlay.style.display = 'flex';
+           overlay.classList = 'lose'
+           overlay.querySelector('.title').innerHTML = `You Lost!!!`
+           round += 1;
+    
+           let p = document.createElement('p');
+           p.innerHTML = `Correct answer round ${round}: <strong><cite>${phraseArrs.phraseNotAsArray}.</cite></strong><br> Quotation by ${phraseArrs.author}`;
+           resetBtn.insertAdjacentElement("afterend", p); 
+            resetGame();
+    
+        }
+    
+    }
+
+    // reset game counters, reset icons and keybord, empty phrase Li
+    function resetGame(){
+        missed = 5;
+        matchCount = 0;
+        showLifeIcons(hearts);
+        removeOldPhraseLetters(phrase.firstElementChild)
+        qwerty.querySelectorAll('button').forEach(item => {
+            item.classList = '';
+            item.disabled = false;
+            });
+            phraseLi = [];
+        }
+        // remove phrase LI elements    
+        function removeOldPhraseLetters(whereFrom){
+            while(whereFrom.lastElementChild){
+                whereFrom.removeChild(whereFrom.lastElementChild);
+            }
+        }
+
+
+//******************************************************************************************** */        
+// Reset button => Start the game => hide Overlay element, create phrase section elements
 resetBtn.addEventListener('click', () =>{
     overlay.style.display = 'none';
     // getRandomPhrase(phrases);
@@ -68,6 +165,7 @@ resetBtn.addEventListener('click', () =>{
     return  phraseLi = document.querySelectorAll('#phrase li');
 });
 
+// listen to screen keybord
 qwerty.addEventListener('click', (e) =>{
     let letter = e.target.textContent;
     //lettercount check on how many times the letter appears in a phrase
@@ -81,7 +179,7 @@ qwerty.addEventListener('click', (e) =>{
     if(letterCount === 0){
             missed--;
                 //console.log(missed);
-            removeLifeIcon(hearts,missed);
+            removeLife(missed, hearts);
     }}
 
 
@@ -89,113 +187,27 @@ qwerty.addEventListener('click', (e) =>{
     setTimeout(checkWin, 500, matchCount);
     checkLost(missed);
     
-    
-
-
+   
 });
 
-function reduceLifeCount(count) {
-    return count--;
-}
 
-function removeLifeIcon(icon, count) {
-    icon[missed].style.display = 'none';
-}
 
-function letterLoop(letterCount, letter) {
-    for (let i = 0; i < phraseArrs.phraseAsArray.length; i++) {
-        letterCount = countLetterMatch(letter, i, letterCount);
-    }
-    return letterCount;
-}
 
-function countLetterMatch(letter, i, letterCount) {
-    if (letter === phraseArrs.phraseAsArray[i].toLowerCase()) {
-        phraseLi[i].classList.add('show');
-        matchCount++;
-        letterCount++;
-    }
-    return letterCount;
-}
 
-function createLetterSection(arr) {
-    for (let i = 0; i < arr.length; i++) {
-        createLetter(arr[i]);
-    }
-}
 
-function checkWin (count){
 
-    if(phraseArrs.phraseArrayNoSpace.length === count){
-       resetBtn.textContent = 'Start new Game?'; 
-       overlay.style.display = 'flex';
-       overlay.classList = 'win';
-       overlay.querySelector('.title').innerHTML = `Congratulations,<br> You have won!!!`
-       round += 1;
-      
-       let p = document.createElement('p');
-       p.innerHTML = `Quotation round ${round}: <strong><cite>${phraseArrs.phraseNotAsArray}.</cite></strong><br> by ${phraseArrs.author}`;
-       resetBtn.insertAdjacentElement("afterend", p);
-       resetGame();
-       //getRandomPhrase(phrases);
-       
 
-    }
 
-}
 
-function checkLost (lCount){
 
-    if(lCount === 0){
-       overlay.style.display = 'flex';
-       overlay.classList = 'lose'
-       overlay.querySelector('.title').innerHTML = `You Lost!!!`
-       round += 1;
 
-       let p = document.createElement('p');
-       p.innerHTML = `Correct answer round ${round}: <strong><cite>${phraseArrs.phraseNotAsArray}.</cite></strong><br> Quotation by ${phraseArrs.author}`;
-       resetBtn.insertAdjacentElement("afterend", p); 
-        resetGame();
 
-    }
 
-}
 
-function disableKeybordLetter(e){
-    e.disabled = true;
-    e.classList.add('chosen');
-}
 
-function removeLife(index, icon){
-    return icon[index].style.display = 'none';
-}
 
-function showLifeIcons(icons){
-    return icons.forEach(icon => icon.style.display = 'inline-block');
-}
 
-function resetGame(){
-    
-    missed = 5;
-    matchCount = 0;
-    showLifeIcons(hearts);
-    removeOldPhraseLetters(phrase.firstElementChild)
-    qwerty.querySelectorAll('button').forEach(item => {
-        item.classList = '';
-        item.disabled = false;
-        });
-        phraseLi = [];
-        // phraseArr = "";
-        // phraseNotAsArray = "";
-        // author = "";
-        // phraseArrayNoSpace = [];    
-        // phraseAsArray = [];
-    }
 
-function removeOldPhraseLetters(whereFrom){
-    while(whereFrom.lastElementChild){
-        whereFrom.removeChild(whereFrom.lastElementChild);
-    }
-}
+
 
 
