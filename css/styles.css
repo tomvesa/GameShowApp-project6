@@ -13,6 +13,7 @@
   --color-keys-light: #E5E5E5;
   --font-size-large: 60px;
   --font-size-medium: 20px;
+  --font-size-small: 12px;
   --transition: all .2s ease-in-out;
 }
 
@@ -32,6 +33,7 @@ body {
 li, ol, ul {
   padding: 0;
   display: inline-block;
+  
 }
 
 h2 {
@@ -86,7 +88,7 @@ a, button {
   font-size: var(--font-size-medium);
   height: 65px;
   width: 65px;
-  padding: 20px 1px 0 1px;
+  padding: 15px 1px 0 1px;
   margin-right: 2px;
   color: transparent;
   background: var(--color-neutral-light);
@@ -100,6 +102,10 @@ a, button {
 .show {
   color: #000;
   background-color: #76CE82;
+}
+
+#phrase li{
+  margin-top: 10px;
 }
 
 /* Keyboard */
@@ -166,4 +172,26 @@ a, button {
 
 .lose a {
   color: var(--color-lose);
+}
+
+@media screen and (max-width: 940px) {
+
+
+  h2 {
+    font-size: var(--font-size-medium);
+  }
+
+  .letter {
+    font-size: var(--font-size-small);
+    height: 35px;
+    width: 35px;
+    padding: 5px 1px 0 1px;
+    margin-right: 2px;
+  }
+
+  button { 
+    margin: 3px;
+    padding: .3rem .8rem;
+    font-size: var(--font-size-small);
+  }
 }
